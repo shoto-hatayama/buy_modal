@@ -21,14 +21,8 @@ window.Vue = require('vue');
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
-Vue.component('defalt-component',require('./components/defaltcomponent.vue').default);
-
-// {
-//     template: require('./components/defaltcomponent.vue').default,
-//     data: function(){
-//         return {fluits:apple}
-//     }
-// });
+Vue.component('sample-component',require('./components/SampleComponent.vue').default);
+Vue.component('default-component',require('./components/defaltcomponent.vue').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

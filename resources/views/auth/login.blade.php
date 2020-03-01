@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    <example-components></example-components>
-    <defalt-component></defalt-component>
+
+    <default-component></default-component>
 @endsection
