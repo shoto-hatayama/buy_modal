@@ -2010,32 +2010,82 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       selected: "",
+      quantity: 0,
       options: [{
+        id: 1,
         name: 'りんご',
-        price: '300',
-        quantity: 0
+        price: '300'
       }, {
+        id: 2,
         name: 'れもん',
-        price: '1000',
-        quantity: 0
+        price: '1000'
       }, {
+        id: 3,
         name: 'もも',
-        price: '500',
-        quantity: 0
+        price: '500'
       }],
-      showContent: false
+      showContent: false,
+      buyItems: []
     };
+  },
+  computed: {
+    showBuyBtn: function showBuyBtn() {
+      return !!this.buyItems.length;
+    },
+    totalPrice: function totalPrice() {
+      return function (price, quantity) {
+        return price * quantity;
+      };
+    }
   },
   methods: {
     openModal: function openModal() {
       this.showContent = true;
     },
-    cloesModal: function cloesModal() {
+    closeModal: function closeModal() {
       this.showContent = false;
+      this.selected = "";
+      this.quantity = 0;
+    },
+    itemBuy: function itemBuy() {
+      var _this = this;
+
+      if (this.quantity != 0 && this.selected != "") {
+        var item_search = this.buyItems.find(function (item) {
+          return item.name == _this.selected.name;
+        });
+
+        if (item_search) {
+          item_search.quantity = parseInt(item_search.quantity) + parseInt(this.quantity);
+        } else {
+          this.buyItems.push({
+            name: this.selected.name,
+            price: this.selected.price,
+            quantity: this.quantity
+          });
+        }
+
+        this.selected = "";
+        this.quantity = 0;
+      }
+    },
+    buy: function buy() {
+      alert("購入しました。");
+      this.buyItems = [];
+    },
+    buyDelete: function buyDelete(index) {
+      this.buyItems.splice(index, 1);
     }
   }
 });
@@ -38186,82 +38236,156 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("p", [_vm._v("下記が購入リストになります。")]),
-    _vm._v(" "),
-    _c("button", { on: { click: _vm.openModal } }, [_vm._v("選択")]),
-    _vm._v(" "),
-    _c(
-      "div",
-      {
-        directives: [
-          {
-            name: "show",
-            rawName: "v-show",
-            value: _vm.showContent,
-            expression: "showContent"
-          }
-        ],
-        attrs: { id: "overlay" }
-      },
-      [
-        _c("div", { attrs: { id: "content" } }, [
-          _c("p", [_vm._v("下記より購入する商品を入力してください")]),
-          _vm._v(" "),
-          _c(
-            "select",
+  return _c(
+    "div",
+    [
+      _c("button", { on: { click: _vm.openModal } }, [_vm._v("選択")]),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          directives: [
             {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.showBuyBtn,
+              expression: "showBuyBtn"
+            }
+          ],
+          on: { click: _vm.buy }
+        },
+        [_vm._v("購入")]
+      ),
+      _vm._v(" "),
+      _c("p", [_vm._v("下記が購入リストになります。")]),
+      _vm._v(" "),
+      _vm._l(_vm.buyItems, function(buyItem, index) {
+        return _c("div", { key: buyItem.name }, [
+          _vm._v(
+            "\n    " +
+              _vm._s(buyItem.name) +
+              " " +
+              _vm._s(buyItem.price) +
+              "円 ×" +
+              _vm._s(buyItem.quantity) +
+              " =" +
+              _vm._s(_vm.totalPrice(buyItem.price, buyItem.quantity)) +
+              " "
+          ),
+          _c(
+            "button",
+            {
+              on: {
+                click: function($event) {
+                  return _vm.buyDelete(index)
+                }
+              }
+            },
+            [_vm._v("取り消し")]
+          )
+        ])
+      }),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.showContent,
+              expression: "showContent"
+            }
+          ],
+          attrs: { id: "overlay" }
+        },
+        [
+          _c("div", { attrs: { id: "content" } }, [
+            _c("p", [_vm._v("下記より購入する商品を入力してください")]),
+            _vm._v(" "),
+            _c(
+              "select",
+              {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.selected,
+                    expression: "selected"
+                  }
+                ],
+                on: {
+                  change: function($event) {
+                    var $$selectedVal = Array.prototype.filter
+                      .call($event.target.options, function(o) {
+                        return o.selected
+                      })
+                      .map(function(o) {
+                        var val = "_value" in o ? o._value : o.value
+                        return val
+                      })
+                    _vm.selected = $event.target.multiple
+                      ? $$selectedVal
+                      : $$selectedVal[0]
+                  }
+                }
+              },
+              [
+                _c("option", { attrs: { disabled: "", value: "" } }, [
+                  _vm._v("選択してください")
+                ]),
+                _vm._v(" "),
+                _vm._l(_vm.options, function(option) {
+                  return _c(
+                    "option",
+                    { key: option.name, domProps: { value: option } },
+                    [
+                      _vm._v(
+                        "\n          " + _vm._s(option.name) + "\n        "
+                      )
+                    ]
+                  )
+                })
+              ],
+              2
+            ),
+            _vm._v("\n      ："),
+            _c("input", {
               directives: [
                 {
                   name: "model",
                   rawName: "v-model",
-                  value: _vm.selected,
-                  expression: "selected"
+                  value: _vm.quantity,
+                  expression: "quantity"
                 }
               ],
+              attrs: { type: "number", min: "0" },
+              domProps: { value: _vm.quantity },
               on: {
-                change: function($event) {
-                  var $$selectedVal = Array.prototype.filter
-                    .call($event.target.options, function(o) {
-                      return o.selected
-                    })
-                    .map(function(o) {
-                      var val = "_value" in o ? o._value : o.value
-                      return val
-                    })
-                  _vm.selected = $event.target.multiple
-                    ? $$selectedVal
-                    : $$selectedVal[0]
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.quantity = $event.target.value
                 }
               }
-            },
-            [
-              _c("option", { attrs: { disabled: "", value: "" } }, [
-                _vm._v("選択してください")
-              ]),
-              _vm._v(" "),
-              _vm._l(_vm.options, function(option) {
-                return _c(
-                  "option",
-                  { key: option.name, domProps: { value: option.price } },
-                  [_vm._v("\n          " + _vm._s(option.name) + "\n        ")]
-                )
-              })
-            ],
-            2
-          ),
-          _vm._v("\n      ："),
-          _c("input", { attrs: { type: "number", min: "0" } }),
-          _vm._v(" "),
-          _c("div", { staticClass: "container-inline" }, [
-            _c("p", [
-              _c("button", { on: { click: _vm.cloesModal } }, [_vm._v("購入")])
+            }),
+            _vm._v(" "),
+            _c("div", { staticClass: "container-inline" }, [
+              _c("p", [
+                _c("button", { on: { click: _vm.itemBuy } }, [_vm._v("購入")]),
+                _vm._v(" "),
+                _c("button", { on: { click: _vm.closeModal } }, [
+                  _vm._v("閉じる")
+                ])
+              ])
             ])
           ])
-        ])
-      ]
-    )
-  ])
+        ]
+      )
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
